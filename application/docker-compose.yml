@@ -1,0 +1,40 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    networks:
+      - back
+    environment:
+      MYSQL_DATABASE: 'db'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'user'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'saet/aiP'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'saet/aiP'
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - "3306:3306"
+    volumes:
+      - my-db:/var/lib/mysql
+# Names our volume
+
+  backend:
+    build: backend
+    restart: always
+    networks:
+      - back
+    ports:
+      - "3000:3000"
+    env_file:
+      - "backend/.env"
+    depends_on:
+      - db
+
+networks:
+  back:
+    driver: bridge
+
+volumes:
+  my-db:
